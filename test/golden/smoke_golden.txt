@@ -1,0 +1,7 @@
+typeset -A args=(
+  [--english]=hello
+  [--i-am-a-bool-opt]=true
+  [--i-have-a-default]=wood
+  [--spanish]=hola
+  [positional]='y;x;'
+)
