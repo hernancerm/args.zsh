@@ -4,4 +4,8 @@ Parse command line arguments in Zsh. See the function `parse_args` in [args.zsh]
 
 ## Developing
 
-[DEVELOP.md](DEVELOP.md)
+[DEVELOP.md](./DEVELOP.md)
+
+## License
+
+[MIT](./LICENSE)
