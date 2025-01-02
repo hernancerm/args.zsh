@@ -1,4 +1,4 @@
-## Define a global associative array `args` with the parsed arguments.
+## Parse command line arguments into an associative array.
 ##
 ## ~ Example:
 ##   ---
