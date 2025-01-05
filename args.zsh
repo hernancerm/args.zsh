@@ -6,7 +6,7 @@
 ##     parse_args \
 ##       '--i-am-a-bool-opt' \
 ##       '[--i-have-a-default]=wood' \
-##       --spanish hola y x --english hello --i-am-a-bool-opt
+##       --spanish hola y 'a b' --english hello --i-am-a-bool-opt
 ##   ---
 ##   Expected parsing:
 ##     typeset -A args=(
@@ -14,7 +14,7 @@
 ##       [--english]=hello
 ##       [--spanish]=hola
 ##       [--i-have-a-default]=wood
-##       [positional]='y;x;'
+##       [positional]="typeset -a args_pos=(y 'a b')"
 ##     )
 ##   ---
 ##
@@ -43,10 +43,11 @@
 ## @stdout Pretty-printed associative array definition of parsed args, `args`.
 function parse_args {
   local -A args=()
+  local -a args_pos=()
   eval "local -a bool_opts=(${1})"
   eval "local -A defaults=(${2})"
   local -a user_args=(${@[@]:3})
-  skip_parse_of_current_arg='false'
+  local skip_parse_of_current_arg='false'
   for (( i=1 ; i<=${#user_args} ; i++ )); do
     if [[ "${skip_parse_of_current_arg}" = 'true' ]]; then
       skip_parse_of_current_arg='false'
@@ -64,14 +65,16 @@ function parse_args {
       continue
     fi
     # Otherwise, it's a positional arg.
-    args+=([positional]+="${user_args[$((i))]};")
+    args_pos+=("${user_args[$((i))]}")
   done
+  # Serialize positional args as an iarray.
+  args[positional]="$(typeset -p args_pos)"
   # Assign default values to unset options.
   for flag_name flag_value in ${(kv)defaults}; do
     if [[ -z "${args[${flag_name}]}" ]]; then
       args+=([${flag_name}]=${flag_value})
     fi
   done
-  # Pretty printed parsed args.
-  typeset -p 1 args
+  # Print aarray.
+  typeset -p args
 }
