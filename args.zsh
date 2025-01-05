@@ -29,12 +29,12 @@
 ##     # Build `args` aarray using the parse_args function.
 ##     eval "$(parse_args \
 ##       '--i-am-a-bool-opt' \
-##       "[--i-have-a-default]=wood" \
+##       '[--i-have-a-default]=wood' \
 ##       ${@})"
 ##   ---
 ##   The user would call their script like this:
 ##   ---
-##     ./<my-script> --spanish hola y x --english hello --i-am-a-bool-opt
+##     ./<my-script> --spanish hola y 'a b' --english hello --i-am-a-bool-opt
 ##   ---
 ##
 ## @param $1:ciarray Boolean options.
