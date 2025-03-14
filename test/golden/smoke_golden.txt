@@ -1,1 +1,1 @@
-typeset -A args=( [--english]=hello [--i-am-a-bool-opt]=true [--i-have-a-default]=wood [--spanish]=hola [positional]='typeset -a args_pos=( y '\''a b'\'' )' )
+typeset -A args=( [--english]=hello [--i-am-a-bool-opt]=true [--i-have-a-default]=wood [--spanish]=hola [-m]=v1 [-n]=v2 [positional]='typeset -a args_pos=( y '\''a b'\'' )' )

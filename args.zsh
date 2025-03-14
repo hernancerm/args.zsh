@@ -1,4 +1,5 @@
-## Parse command line arguments into an associative array.
+## Parse command line arguments into an aarray.
+## Types docs: <https://github.com/hernancerm/zgold/blob/main/DEVELOP.md>.
 ##
 ## ~ Example:
 ##   ---
@@ -6,20 +7,21 @@
 ##     parse_args \
 ##       '--i-am-a-bool-opt' \
 ##       '[--i-have-a-default]=wood' \
-##       --spanish hola y 'a b' --english hello --i-am-a-bool-opt
+##       --spanish hola y 'a b' --english=hello -m v1 -n=v2 --i-am-a-bool-opt
 ##   ---
 ##   Expected parsing:
 ##     typeset -A args=(
-##       [--i-am-a-bool-opt]=true
 ##       [--english]=hello
-##       [--spanish]=hola
+##       [--i-am-a-bool-opt]=true
 ##       [--i-have-a-default]=wood
+##       [--spanish]=hola
+##       [-m]=v2
+##       [-n]=v1
 ##       [positional]="typeset -a args_pos=(y 'a b')"
 ##     )
 ##   ---
 ##
 ## ~ Not supported:
-##   * Using an equal symbol (=) to separate the option name to its value.
 ##   * Merging of short-form options, e.g., -G -s == -Gs.
 ##
 ## ~ Usage:
@@ -39,8 +41,8 @@
 ##
 ## @param $1:ciarray Boolean options.
 ## @param $2:caarray Options which have a default.
-## @param $3... Arguments provided by the user.
-## @stdout Pretty-printed associative array definition of parsed args, `args`.
+## @param $3... User-provided args, usually the script args.
+## @stdout:aarray Parsed args as `args`.
 function parse_args {
   local -A args=()
   local -a args_pos=()
@@ -55,12 +57,19 @@ function parse_args {
     fi
     # If arg begins with a dash (-) then it's an option.
     if [[ "${${user_args[${i}]}[1]}" = '-' ]]; then
-      # Check if the option is bool(ean).
       if [[ ${bool_opts[(i)${user_args[i]}]} -le ${#bool_opts} ]]; then
+        # The option is a bool(ean).
         args+=(["${user_args[${i}]}"]='true')
       else
-        args+=(["${user_args[${i}]}"]="${user_args[$((i+1))]}")
-        skip_parse_of_current_arg='true'
+        # The option accepts a value.
+        if [[ "${${user_args[${i}]}[(i)=]}" -lt ${#user_args[${i}]} ]]; then
+          # The option and value are separated by an equal symbol (=).
+          args+=(["${${(s:=:)${user_args[${i}]}}[1]}"]=""${${(s:=:)${user_args[${i}]}}[2]}"")
+        else
+          # The option and value are separated by whitespace.
+          args+=(["${user_args[${i}]}"]="${user_args[$((i+1))]}")
+          skip_parse_of_current_arg='true'
+        fi
       fi
       continue
     fi
@@ -75,6 +84,5 @@ function parse_args {
       args+=([${flag_name}]=${flag_value})
     fi
   done
-  # Print aarray.
   typeset -p args
 }
