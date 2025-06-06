@@ -1,5 +1,5 @@
 ## Parse command line arguments into an aarray.
-## Types docs: <https://github.com/hernancerm/zgold/blob/main/DEVELOP.md>.
+## Data types docs: <https://github.com/hernancerm/zgold/blob/main/DEVELOP.md>.
 ##
 ## ~ Example:
 ##   ---
@@ -63,10 +63,12 @@ function parse_args {
       else
         # The option accepts a value.
         if [[ "${${user_args[${i}]}[(i)=]}" -lt ${#user_args[${i}]} ]]; then
-          # The option and value are separated by an equal symbol (=).
-          args+=(["${${(s:=:)${user_args[${i}]}}[1]}"]=""${${(s:=:)${user_args[${i}]}}[2]}"")
+          # The option name and value are separated by an equal symbol (=).
+          local opt_equal_symbol_lhs="${${(s:=:)${user_args[${i}]}}[1]}"
+          local opt_equal_symbol_rhs="${${(s:=:)${user_args[${i}]}}[2]}"
+          args+=(["${opt_equal_symbol_lhs}"]="${opt_equal_symbol_rhs}")
         else
-          # The option and value are separated by whitespace.
+          # The option name and value are separated by whitespace.
           args+=(["${user_args[${i}]}"]="${user_args[$((i+1))]}")
           skip_parse_of_current_arg='true'
         fi
